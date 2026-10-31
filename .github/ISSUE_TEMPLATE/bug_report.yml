@@ -1,0 +1,71 @@
+name: 🐞 Bug report
+description: Something does not work as expected in GLC CONVERTER.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem! You can write in English, French or Haitian Creole.
+        Please do not share private files or personal information.
+  - type: input
+    id: version
+    attributes:
+      label: GLC CONVERTER version
+      description: Shown in the "About" window.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Windows version
+      options:
+        - Windows 11
+        - Windows 10
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: Type of conversion
+      options:
+        - Video
+        - Image
+        - Audio
+        - Document
+        - Web / HTML animation to video
+        - 3D
+        - Installation / startup
+        - User interface
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the problem and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Add a file (format, size, resolution)
+        2. Choose the target format ...
+        3. Click Convert
+    validations:
+      required: true
+  - type: input
+    id: gpu
+    attributes:
+      label: Graphics card (optional)
+      placeholder: "NVIDIA RTX 3060 / Intel UHD 620 / AMD Radeon ..."
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error message or screenshot (optional)
+      render: text

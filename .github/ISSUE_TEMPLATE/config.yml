@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions and ideas (Discussions)
+    url: https://github.com/granlakucompany/glc-converter/discussions
+    about: Ask a question about GLC CONVERTER or share an idea with the community.
+  - name: 🌐 Official website and download
+    url: https://granlaku.com/glcconverter/
+    about: Download the Windows installer and read the documentation.
+  - name: ✉️ Support GRAN LAKU COMPANY
+    url: mailto:support@granlaku.com
+    about: Private questions that should not be posted publicly.

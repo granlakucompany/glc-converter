@@ -52,8 +52,7 @@ class TestAdvancedAndPlayerButtons(unittest.TestCase):
                 win = self._open_window(light)
                 panel = win.preset_panel
                 btn = panel.btn_toggle_adv
-                # Le texte complet du bouton tient dans sa largeur
-                self.assertGreaterEqual(btn.width(), btn.fontMetrics().horizontalAdvance(btn.text()))
+                self._assert_adv_button_readable(btn)
 
                 btn.click()
                 pump(0.4)
@@ -67,6 +66,29 @@ class TestAdvancedAndPlayerButtons(unittest.TestCase):
                 btn.click()
                 pump(0.3)
                 self.assertFalse(panel.adv_popup.isVisible())
+
+    def _assert_adv_button_readable(self, btn):
+        # Le texte affiché (« && » = un « & » à l'écran) tient dans la largeur du bouton,
+        # la flèche reste visible, et un texte raccourci garde le texte complet en infobulle.
+        shown = btn.text().replace("&&", "&")
+        self.assertLessEqual(btn.fontMetrics().horizontalAdvance(shown), btn.width())
+        self.assertTrue(shown.endswith(("▼", "▲")), shown)
+        if shown != btn.full_text():
+            self.assertIn("…", shown)
+            self.assertEqual(btn.toolTip(), btn.full_text())
+
+    def test_advanced_button_readable_in_all_languages(self):
+        from src.core.i18n import I18nManager
+        i18n = I18nManager.get_instance()
+        old_lang = i18n.current_lang
+        self.addCleanup(lambda: i18n.set_language(old_lang))
+        win = self._open_window(True, (960, 600))
+        for lang in ("fr", "ht", "en", "es", "pt", "de", "it", "zh", "ru"):
+            with self.subTest(lang=lang):
+                i18n.set_language(lang)
+                win.preset_panel.retranslate_ui(lang)
+                pump(0.1)
+                self._assert_adv_button_readable(win.preset_panel.btn_toggle_adv)
 
     def test_player_buttons_keep_their_size(self):
         for light in (True, False):

@@ -4,12 +4,12 @@ GLC CONVERTER — Étape 2 : Sélecteur de Formats Didactique & Accessible
 """
 import time
 
-from PySide6.QtCore import Qt, Signal, QPoint
+from PySide6.QtCore import Qt, Signal, QPoint, QEvent
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtWidgets import (
     QFrame, QVBoxLayout, QHBoxLayout, QLabel, QComboBox,
     QSpinBox, QCheckBox, QWidget, QPushButton, QButtonGroup,
-    QStackedWidget, QGridLayout
+    QStackedWidget, QGridLayout, QSizePolicy
 )
 from ..core.hw_accel import HardwareDetector
 from ..core.i18n import I18nManager, tr
@@ -44,6 +44,51 @@ class _AdvancedPopup(QFrame):
     def hideEvent(self, event):
         super().hideEvent(event)
         self.closed.emit()
+
+
+class _ElidingButton(QPushButton):
+    """Bouton dont le libellé se termine par « … » quand la carte est trop étroite.
+    Le suffixe (flèche ▼/▲) reste toujours visible et le texte complet passe en infobulle.
+    Les traductions longues (« Réglages Avancés & 12K DCI (Optionnel) ») débordaient de la carte."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self._label = ""
+        self._suffix = ""
+        policy = self.sizePolicy()
+        policy.setHorizontalPolicy(QSizePolicy.Policy.Ignored)
+        self.setSizePolicy(policy)
+
+    def set_label(self, label: str, suffix: str = ""):
+        self._label = label
+        self._suffix = suffix
+        self._refresh()
+
+    def full_text(self) -> str:
+        return f"{self._label}{self._suffix}"
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._refresh()
+
+    def changeEvent(self, event):
+        super().changeEvent(event)
+        if event.type() in (QEvent.Type.FontChange, QEvent.Type.StyleChange):
+            self._refresh()
+
+    def _refresh(self):
+        fm = self.fontMetrics()
+        full = self.full_text()
+        available = max(0, self.width() - 4)
+        if fm.horizontalAdvance(full) <= available:
+            shown = full
+        else:
+            label_width = max(0, available - fm.horizontalAdvance(self._suffix))
+            shown = fm.elidedText(self._label, Qt.TextElideMode.ElideRight, label_width) + self._suffix
+        self.setToolTip(full if shown != full else "")
+        # « & » est un raccourci clavier pour Qt : il faut le doubler pour l'afficher
+        super().setText(shown.replace("&", "&&"))
+
 
 class PresetPanel(QFrame):
     """
@@ -218,7 +263,7 @@ class PresetPanel(QFrame):
         # 4. Réglages Avancés & 12K DCI : panneau flottant ouvert sous le bouton.
         # La carte de l'Étape 2 a une hauteur limitée : un volet déplié à l'intérieur
         # écrasait tous ses contrôles. Le panneau flottant ne prend aucune place dans la carte.
-        self.btn_toggle_adv = QPushButton()
+        self.btn_toggle_adv = _ElidingButton()
         self.btn_toggle_adv.setObjectName("btnAdvToggle")
         self.btn_toggle_adv.setCursor(Qt.CursorShape.PointingHandCursor)
         self.btn_toggle_adv.clicked.connect(self._toggle_advanced_options)
@@ -316,7 +361,7 @@ class PresetPanel(QFrame):
 
     def _update_adv_button_text(self):
         arrow = "▲" if self.adv_popup.isVisible() else "▼"
-        self.btn_toggle_adv.setText(f"{tr('advanced_toggle').replace('&', '&&')} {arrow}")
+        self.btn_toggle_adv.set_label(tr("advanced_toggle"), f" {arrow}")
 
     def _on_category_button_clicked(self, idx: int):
         self.stack.setCurrentIndex(idx)
