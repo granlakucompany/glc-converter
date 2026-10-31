@@ -1,5 +1,5 @@
 """
-Non-régression licences : GLC CONVERTER est vendu en logiciel fermé.
+Non-régression licences : GLC CONVERTER est distribué sous licence MIT.
 Aucun encodeur GPL (libx264, libx265…) ne doit être choisi ni livré.
 """
 import os
