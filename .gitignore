@@ -1,0 +1,70 @@
+# =============================================================================
+# GLC CONVERTER — Fichier .gitignore Officiel pour GitHub
+# Éditeur: GRAN LAKU COMPANY | https://granlaku.com/glcconverter
+# =============================================================================
+
+# --- Caches Python & Fichiers Compilés ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+*.pyc
+
+# --- Environnements Virtuels & Dépendances Locales ---
+venv/
+.venv/
+env/
+.env
+ENV/
+build/
+dist/
+# Généré par PyInstaller (contient les chemins absolus de la machine de build)
+*.spec
+*.egg-info/
+.eggs/
+
+# --- Données et Sorties de Rendu Locales ---
+OUTPUT/
+output/
+*.mp4
+*.webm
+*.mov
+*.mkv
+*.webp
+*.avif
+*.heic
+*.pdf
+
+# --- Fichiers de Configuration et États Utilisateur ---
+settings.json
+*.time
+statistik.time
+.glc_converter/
+*.log
+
+# --- Fichiers de Travail Temporaires & Débogage ---
+probe_key.php
+scratch/
+tests/screenshots/
+*.png.tmp
+*.tmp
+
+# --- Fichiers IDE & Outils Locaux ---
+.wasdev/
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --- Backend Serveur (Déployé Séparément sur le VPS) ---
+server/
+
+# --- Clés, Certificats et Secrets Système ---
+*.key
+*.pem
+*.pfx
+*.cert
+id_rsa*
+id_ed25519*
+.ssh/
+remote-cache/
